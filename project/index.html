@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ContentCraft AI - Create 7 Pieces of Content in < 60 Seconds</title>
+    <meta name="description" content="Generate SEO blog posts, Twitter threads, LinkedIn posts, YouTube scripts, and more from a single topic. Save 5+ hours every week with AI-powered content creation." />
+    <meta property="og:title" content="ContentCraft AI - Create 7 Pieces of Content in < 60 Seconds" />
+    <meta property="og:description" content="Transform any idea into complete content packs for all platforms. Blog posts, social media, scripts, and hashtags - all generated in seconds." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://contentcraft.ai" />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ContentCraft AI - Create 7 Pieces of Content in < 60 Seconds" />
+    <meta name="twitter:description" content="Generate complete content packs for all platforms in seconds with AI." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <style>
+      /* Critical CSS for LCP optimization */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+      }
+      .hero-section {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Quick Access UI for Testing -->
+    <div id="quick-access" style="position: fixed; top: 20px; right: 20px; z-index: 9999; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 400px; display: none;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Quick Generator</h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="login-btn" style="padding: 8px 16px; border-radius: 8px; background: #0D9488; color: white; border: none; font-size: 12px; cursor: pointer;">
+            Log In / Sign Up
+          </button>
+          <span id="credits-label" style="font-size: 12px; color: #6B7280;">
+            Credits left: 10
+          </span>
+        </div>
+      </div>
+      
+      <form id="gen-form" style="display: flex; flex-direction: column; gap: 12px;">
+        <input name="topic" placeholder="Topic" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 14px;" required />
+        <input name="audience" placeholder="Audience" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 14px;" required />
+        <input name="tone" placeholder="Tone" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 14px;" required />
+        <input name="length" placeholder="Length" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 14px;" required />
+        <button type="submit" style="padding: 12px 24px; border-radius: 8px; background: linear-gradient(to right, #0D9488, #3B82F6); color: white; border: none; font-weight: 600; cursor: pointer;">
+          Generate
+        </button>
+      </form>
+      
+      <textarea id="output" rows="8" placeholder="Generated content will appear here..." style="width: 100%; margin-top: 15px; padding: 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 12px; resize: vertical;"></textarea>
+      
+      <button id="toggle-quick-access" style="position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; border-radius: 50%; background: #EF4444; color: white; border: none; cursor: pointer; font-size: 12px;">×</button>
+    </div>
+    
+    <!-- Toggle Button -->
+    <button id="show-quick-access" style="position: fixed; bottom: 20px; right: 20px; z-index: 9998; padding: 12px; border-radius: 50%; background: #0D9488; color: white; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+      ⚡
+    </button>
+
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        once: true,
+        duration: 700,
+        easing: 'ease-out-quart',
+        offset: 50
+      });
+    </script>
+
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      // env placeholders (Netlify injects real values at runtime)
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL || "SUPA_PLACEHOLDER",
+        import.meta.env.VITE_SUPABASE_ANON_KEY || "SUPA_PLACEHOLDER"
+      );
+
+      // Quick access toggle functionality
+      document.getElementById('show-quick-access').onclick = () => {
+        document.getElementById('quick-access').style.display = 'block';
+        document.getElementById('show-quick-access').style.display = 'none';
+      };
+
+      document.getElementById('toggle-quick-access').onclick = () => {
+        document.getElementById('quick-access').style.display = 'none';
+        document.getElementById('show-quick-access').style.display = 'block';
+      };
+
+      /* ─ login ─ */
+      document.getElementById('login-btn').onclick = async () => {
+        const email = prompt('Email for magic-link sign-in / sign-up');
+        if (!email) return;
+        const { error } = await supabase.auth.signInWithOtp({ email });
+        alert(error ? error.message : 'Magic-link sent! Check your inbox.');
+      };
+
+      /* ─ generate ─ */
+      document.getElementById('gen-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return alert('Please log in first.');
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Generating...';
+        submitBtn.disabled = true;
+
+        try {
+          const body = Object.fromEntries(new FormData(e.target));
+          const res = await fetch('/.netlify/functions/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            if (res.status === 402) {
+              alert('Out of credits! Please upgrade your plan.');
+            } else {
+              alert(`Error: ${errorText}`);
+            }
+            return;
+          }
+
+          const { blog, remaining } = await res.json();
+          document.getElementById('output').value = blog;
+          document.getElementById('credits-label').textContent = `Credits left: ${remaining}`;
+        } catch (error) {
+          alert(`Network error: ${error.message}`);
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      };
+
+      // Check auth state on load
+      supabase.auth.onAuthStateChange((event, session) => {
+        const loginBtn = document.getElementById('login-btn');
+        if (session) {
+          loginBtn.textContent = 'Logged In';
+          loginBtn.style.background = '#059669';
+        } else {
+          loginBtn.textContent = 'Log In / Sign Up';
+          loginBtn.style.background = '#0D9488';
+        }
+      });
+    </script>
+  </body>
+</html>
