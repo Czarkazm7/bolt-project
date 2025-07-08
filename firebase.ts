@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAttCESYNOxAdshSvDENtYY_Zp1cfhgDUw",
+  apiKey: "AIzaSyAttCESYNOxAdshSvDEnTYY_Zp1cfhgDUw",
   authDomain: "calculatorbear-29a76.firebaseapp.com",
   projectId: "calculatorbear-29a76",
   storageBucket: "calculatorbear-29a76.appspot.com",

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockClosedIcon, XIcon } from '../components/icons';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../firebase';
 
 const AdminLoginPage: React.FC = () => {
@@ -37,6 +37,8 @@ const AdminLoginPage: React.FC = () => {
     setIsForgotPasswordOpen(false);
   };
 
+  const [googleError, setGoogleError] = useState('');
+
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetMessage('');
@@ -46,6 +48,18 @@ const AdminLoginPage: React.FC = () => {
     } catch (error) {
       console.error("Error sending password reset email:", error);
       setResetMessage("Failed to send password reset email. Please try again.");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleError('');
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate('/admin/dashboard');
+    } catch (err) {
+      console.error("Google Sign-in error:", err);
+      setGoogleError('Failed to sign in with Google. Please try again.');
     }
   };
 
@@ -139,6 +153,21 @@ const AdminLoginPage: React.FC = () => {
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-brand-primary hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
               >
                 Sign in
+              </button>
+            </div>
+
+            {googleError && (
+              <p className="text-sm text-red-600 text-center">{googleError}</p>
+            )}
+
+            <div>
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" className="h-5 w-5 mr-2" />
+                Sign in with Google
               </button>
             </div>
           </form>
