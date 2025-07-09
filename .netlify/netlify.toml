@@ -1,16 +1,16 @@
-functionsDirectory = "C:\\Users\\jacos\\Downloads\\calculatorbear\\netlify\\functions"
-functionsDirectoryOrigin = "ui"
+functionsDirectory = "C:\\Users\\jacos\\Downloads\\calculatorbear\\project\\project\\netlify\\functions"
+functionsDirectoryOrigin = "config"
 plugins = []
 headers = []
 redirects = []
 
 [build]
-publish = "C:\\Users\\jacos\\Downloads\\calculatorbear\\dist"
+publish = "C:\\Users\\jacos\\Downloads\\calculatorbear\\project\\project\\dist"
 publishOrigin = "config"
 commandOrigin = "config"
-base = "C:\\Users\\jacos\\Downloads\\calculatorbear"
+base = "C:\\Users\\jacos\\Downloads\\calculatorbear\\project"
 command = "npm run build"
-functions = "C:\\Users\\jacos\\Downloads\\calculatorbear\\netlify\\functions"
+functions = "C:\\Users\\jacos\\Downloads\\calculatorbear\\project\\project\\netlify\\functions"
 
 [build.environment]
 

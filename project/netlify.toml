@@ -1,5 +1,5 @@
 [build]
-  publish = "project/dist"
+  publish = "dist"
   command = "npm run build"
 [functions]
-  directory = "project/netlify/functions"
+  directory = "netlify/functions"
